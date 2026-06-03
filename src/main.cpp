@@ -1,15 +1,17 @@
 #include <Arduino.h>
-#include "AudioTools.h"
-#include "BluetoothA2DPSink.h"
 
-BluetoothA2DPSink a2dpSink;
+constexpr uint8_t LED_PIN = 2;
+constexpr unsigned long BLINK_INTERVAL_MS = 500;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Starting Bluetooth A2DP sink...");
-
-  a2dpSink.start("Fabia BT Audio");
+  Serial.println("Starting blink...");
+  pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(BLINK_INTERVAL_MS);
+  digitalWrite(LED_PIN, LOW);
+  delay(BLINK_INTERVAL_MS);
 }
