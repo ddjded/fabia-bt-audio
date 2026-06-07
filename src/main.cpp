@@ -1,13 +1,13 @@
 #include <Arduino.h>
-#include "BluetoothA2DPSink.h"
+#include "BluetoothA2DPSinkQueued.h"
 
 constexpr int I2S_BCK_PIN = 25;
 constexpr int I2S_WS_PIN = 26;
 constexpr int I2S_DATA_PIN = 22;
-constexpr uint8_t INITIAL_VOLUME = 80;
+constexpr uint8_t INITIAL_VOLUME = 127;
 constexpr int32_t MAX_VOLUME_FACTOR = 3072;
 
-BluetoothA2DPSink a2dpSink;
+BluetoothA2DPSinkQueued a2dpSink;
 A2DPDefaultVolumeControl volumeControl(MAX_VOLUME_FACTOR);
 
 void onVolumeChanged(int volume) {
@@ -45,6 +45,7 @@ void setup() {
 
   a2dpSink.set_i2s_config(i2sConfig);
   a2dpSink.set_pin_config(pinConfig);
+  a2dpSink.set_channels(I2S_CHANNEL_MONO);
   a2dpSink.set_volume_control(&volumeControl);
   a2dpSink.set_on_volumechange(onVolumeChanged);
   a2dpSink.set_volume(INITIAL_VOLUME);
