@@ -10,11 +10,10 @@ constexpr int I2S_DATA_PIN = 22;
 
 constexpr uint32_t SAMPLE_RATE = 44100;
 constexpr float TONE_FREQUENCY = 1000.0f;
-constexpr int16_t TONE_AMPLITUDE = 10000;
-constexpr size_t FRAME_COUNT = 256;
+constexpr int16_t TONE_AMPLITUDE = 3000;
+constexpr size_t FRAME_COUNT = 441;
 
 int16_t sampleBuffer[FRAME_COUNT * 2];
-float phase = 0.0f;
 
 void setup() {
   Serial.begin(115200);
@@ -47,27 +46,22 @@ void setup() {
   i2s_set_pin(I2S_PORT, &pinConfig);
   i2s_zero_dma_buffer(I2S_PORT);
 
-  Serial.println("I2S tone test started");
-}
-
-void loop() {
   constexpr float FULL_CYCLE_RADIANS = 2.0f * PI;
   constexpr float PHASE_STEP =
       FULL_CYCLE_RADIANS * TONE_FREQUENCY / SAMPLE_RATE;
 
   for (size_t frame = 0; frame < FRAME_COUNT; ++frame) {
-    const int16_t sample =
-        static_cast<int16_t>(sinf(phase) * TONE_AMPLITUDE);
+    const int16_t sample = static_cast<int16_t>(
+        sinf(frame * PHASE_STEP) * TONE_AMPLITUDE);
 
     sampleBuffer[frame * 2] = sample;
     sampleBuffer[frame * 2 + 1] = sample;
-
-    phase += PHASE_STEP;
-    if (phase >= FULL_CYCLE_RADIANS) {
-      phase -= FULL_CYCLE_RADIANS;
-    }
   }
 
+  Serial.println("I2S tone test started");
+}
+
+void loop() {
   size_t bytesWritten = 0;
   i2s_write(I2S_PORT, sampleBuffer, sizeof(sampleBuffer), &bytesWritten,
             portMAX_DELAY);
